@@ -4,8 +4,6 @@ import Footer from '../components/Footer'
 import WorksBelt from '../components/WorksBelt'
 
 export default function Home() {
-  const beltItems = projects.concat(projects)
-
   return (
     <div>
       <div className="container hero">
@@ -32,7 +30,7 @@ export default function Home() {
             <span className="works-belt-hint">Drag to browse</span>
           </div>
         </div>
-        <WorksBelt projects={beltItems} />
+        <WorksBelt projects={projects} />
         <div className="container works-belt-link-mobile">
           <Link to="/works">View all projects →</Link>
         </div>

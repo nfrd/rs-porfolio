@@ -300,9 +300,8 @@ button {
   -ms-overflow-style: none;
   padding: 0 64px;
   cursor: grab;
-  /* Horizontal travel is driven by the drag handler so it can wrap seamlessly;
-     vertical panning stays with the browser. */
-  touch-action: pan-y;
+  /* No touch-action override: horizontal swipes are native scrolls, so touch
+     keeps the browser's own momentum. The mouse gets the JS drag instead. */
   overscroll-behavior-x: contain;
 }
 .works-belt::-webkit-scrollbar {
