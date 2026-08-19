@@ -22,6 +22,7 @@ body {
   color: var(--text);
   font-family: 'Archivo', system-ui, sans-serif;
   min-height: 100vh;
+  overflow-x: hidden;
 }
 
 a {
@@ -219,170 +220,216 @@ button {
 
 /* Hero */
 .hero {
-  padding: 96px 64px 56px;
+  padding: 96px 64px 72px;
+  display: grid;
+  gap: 32px;
 }
 .hero h1 {
   font-weight: 800;
-  font-size: clamp(38px, 5.5vw, 68px);
-  line-height: 1.1;
+  font-size: clamp(34px, 4.4vw, 58px);
+  line-height: 1.12;
   letter-spacing: -0.02em;
-  margin: 0 0 40px;
+  margin: 0;
+  max-width: 24ch;
+}
+.hero p {
+  font-size: 18px;
+  line-height: 1.6;
+  color: rgba(32, 30, 29, 0.72);
+  margin: 0;
+  max-width: 56ch;
+}
+.hero .btn {
+  justify-self: start;
 }
 @media (max-width: 720px) {
   .hero {
-    padding: 40px 20px 32px;
+    padding: 44px 20px 36px;
+    gap: 24px;
   }
   .hero h1 {
-    margin: 0 0 28px;
+    font-size: 32px;
+    line-height: 1.18;
+  }
+  .hero p {
+    font-size: 16px;
   }
   .hero .btn {
     width: 100%;
     min-height: 48px;
+    justify-self: stretch;
   }
 }
 
-/* Culture block */
-.culture {
-  padding: 96px 64px;
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 32px;
-  align-items: end;
+/* Works belt (home) */
+.works-belt-wrap {
+  padding: 40px 0 72px;
 }
-.culture p {
-  font-weight: 800;
-  font-size: clamp(22px, 2vw, 30px);
-  line-height: 1.4;
-  letter-spacing: -0.01em;
-  margin: 0;
-}
-.culture .img-placeholder,
-.culture img {
-  aspect-ratio: 4/3;
-}
-.culture img {
-  display: block;
-  width: 100%;
-  height: auto;
-  object-fit: cover;
-  filter: grayscale(1);
-}
-@media (max-width: 720px) {
-  .culture {
-    padding: 36px 20px;
-    grid-template-columns: 1fr 1fr;
-    gap: 20px;
-  }
-  .culture p {
-    grid-column: 1 / -1;
-  }
-  .culture .img-placeholder,
-  .culture img {
-    aspect-ratio: 4/5;
-  }
-}
-
-/* Works list (home) */
-.works-list {
-  padding: 64px 64px 72px;
-}
-.works-list-head {
+.works-belt-head {
   display: flex;
-  align-items: baseline;
+  align-items: center;
   justify-content: space-between;
-  margin-bottom: 24px;
+  gap: 16px;
   flex-wrap: wrap;
-  gap: 12px;
+  padding-bottom: 24px;
 }
-.works-list-head a {
+.works-belt-head-right {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+.works-belt-head-right a {
   font-size: 14px;
   font-weight: 600;
   cursor: pointer;
 }
-.works-row {
+.works-belt-hint {
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(32, 30, 29, 0.5);
+}
+.works-belt-link-mobile {
+  display: none;
+}
+.works-belt {
   display: flex;
-  align-items: baseline;
-  gap: 20px;
-  flex-wrap: wrap;
-  padding: 22px 12px;
-  border-top: 2px solid var(--border);
+  gap: 24px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  padding: 0 64px;
+  cursor: grab;
+  /* Horizontal travel is driven by the drag handler so it can wrap seamlessly;
+     vertical panning stays with the browser. */
+  touch-action: pan-y;
+  overscroll-behavior-x: contain;
 }
-.works-row h3 {
+.works-belt::-webkit-scrollbar {
+  display: none;
+}
+.works-belt[data-dragging='true'] {
+  cursor: grabbing;
+  user-select: none;
+}
+.works-belt-item {
+  flex: 0 0 auto;
+  width: 380px;
+  min-width: 0;
+}
+.works-belt-item img {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 4/5;
+  object-fit: cover;
+  filter: grayscale(1);
+  user-select: none;
+  -webkit-user-drag: none;
+}
+.works-belt-item h3 {
   font-weight: 800;
-  font-size: 24px;
-  margin: 0;
+  font-size: 22px;
+  margin: 14px 0 4px;
+  letter-spacing: -0.01em;
 }
-.works-row span {
+.works-belt-item span {
   font-size: 13px;
   color: rgba(32, 30, 29, 0.6);
 }
 @media (max-width: 720px) {
-  .works-list {
-    padding: 32px 20px;
+  .works-belt-wrap {
+    padding: 26px 0 40px;
   }
-  .works-row {
-    display: grid;
-    gap: 4px;
-    padding: 18px 0;
+  .works-belt-head {
+    padding: 0 20px 16px;
   }
-  .works-row h3 {
-    font-size: 22px;
+  .works-belt-head-right {
+    display: none;
+  }
+  .works-belt-link-mobile {
+    display: block;
+    padding: 22px 20px 0;
+  }
+  .works-belt-link-mobile a {
+    font-size: 14px;
+    font-weight: 600;
+  }
+  .works-belt {
+    gap: 14px;
+    padding: 0 20px;
+  }
+  .works-belt-item {
+    width: 250px;
+  }
+  .works-belt-item h3 {
+    font-size: 18px;
+    margin: 12px 0 4px;
   }
 }
 
-/* Capabilities */
-.capabilities {
-  padding: 0 64px 56px;
-}
-.capabilities-eyebrow {
-  margin-bottom: 32px;
-}
-.capability {
+/* About teaser (home) */
+.about-teaser {
+  padding: 72px 64px;
   display: grid;
-  grid-template-columns: 100px minmax(0, 340px) minmax(0, 1fr);
-  gap: 24px 48px;
-  align-items: baseline;
-  padding: 28px 0;
-  border-top: 2px solid var(--border);
+  grid-template-columns: minmax(0, 180px) minmax(0, 1fr);
+  gap: 32px 48px;
+  align-items: start;
 }
-.capability .num {
+.about-teaser-body {
+  display: grid;
+  gap: 20px;
+  max-width: 56ch;
+}
+.about-teaser-body p {
+  font-weight: 800;
+  font-size: clamp(20px, 2.2vw, 28px);
+  line-height: 1.4;
+  letter-spacing: -0.01em;
+  margin: 0;
+}
+.about-teaser-body a {
   font-size: 14px;
   font-weight: 600;
-  margin: 0;
-  position: relative;
-  padding-left: 20px;
+  cursor: pointer;
 }
-.capability .num::before {
-  content: '';
-  position: absolute;
-  left: 0;
-  top: 6px;
-  width: 9px;
-  height: 9px;
-  background: var(--text);
+@media (max-width: 720px) {
+  .about-teaser {
+    padding: 32px 20px 36px;
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+  .about-teaser-body {
+    gap: 16px;
+  }
+  .about-teaser-body p {
+    font-size: 21px;
+  }
 }
-.capability h3 {
+
+/* Capabilities (about page) */
+.capabilities-full-eyebrow {
+  margin-bottom: 24px;
+}
+.capability-full {
+  padding: 22px 0;
+  border-top: 2px solid var(--border);
+}
+.capability-full h3 {
   font-weight: 800;
   font-size: 22px;
   margin: 0;
   letter-spacing: -0.01em;
 }
-.capability p {
-  font-size: 15px;
-  line-height: 1.6;
-  margin: 0;
-  color: rgba(32, 30, 29, 0.78);
-  max-width: 52ch;
-}
 @media (max-width: 720px) {
-  .capabilities {
-    padding: 8px 20px 40px;
+  .capabilities-full-eyebrow {
+    margin-bottom: 18px;
   }
-  .capability {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 10px;
-    padding: 22px 0;
+  .capability-full {
+    padding: 20px 0;
+  }
+  .capability-full h3 {
+    font-size: 20px;
   }
 }
 
@@ -406,22 +453,9 @@ button {
 }
 .works-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 56px 32px;
   align-items: start;
-}
-.work-card .img-placeholder,
-.work-card img {
-  aspect-ratio: 4/3;
-  margin-bottom: 16px;
-}
-.work-card img {
-  display: block;
-  width: 100%;
-  max-width: 100%;
-  height: auto;
-  object-fit: cover;
-  filter: grayscale(1);
 }
 .work-card h3 {
   font-weight: 800;
@@ -438,10 +472,76 @@ button {
   color: rgba(32, 30, 29, 0.7);
   margin: 10px 0 0;
 }
-@media (max-width: 900px) {
-  .works-grid {
-    grid-template-columns: repeat(2, 1fr);
+
+/* Project shot carousel (works page cards) */
+.project-shots {
+  position: relative;
+  margin-bottom: 16px;
+}
+.project-shots-track {
+  display: flex;
+  overflow-x: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  cursor: grab;
+  overscroll-behavior-x: contain;
+}
+/* Touch swipes are native scrolls, so the browser keeps its own momentum and
+   snapping. The mouse drag snaps in JS on release instead — mandatory snapping
+   there would re-snap the moment the drag ends and fight the flick. */
+@media (pointer: coarse) {
+  .project-shots-track {
+    scroll-snap-type: x mandatory;
   }
+}
+.project-shots-track::-webkit-scrollbar {
+  display: none;
+}
+.project-shots-track[data-dragging='true'] {
+  cursor: grabbing;
+  user-select: none;
+  /* Snapping mid-drag fights the pointer; the release snaps instead. */
+  scroll-snap-type: none;
+}
+.project-shots-track img,
+.project-shots > img {
+  display: block;
+  flex: 0 0 100%;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 4/3;
+  object-fit: cover;
+  filter: grayscale(1);
+  user-select: none;
+  -webkit-user-drag: none;
+  scroll-snap-align: start;
+}
+.project-shots-nav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 34px;
+  height: 34px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  background: rgba(250, 249, 247, 0.55);
+  color: var(--text);
+  font-family: inherit;
+  font-size: 14px;
+  cursor: pointer;
+  opacity: 0.5;
+}
+.project-shots-nav:hover {
+  opacity: 1;
+  background: rgba(250, 249, 247, 0.85);
+}
+.project-shots-nav.prev {
+  left: 12px;
+}
+.project-shots-nav.next {
+  right: 12px;
 }
 @media (max-width: 720px) {
   .works-page-head {
@@ -453,6 +553,16 @@ button {
   .works-grid {
     grid-template-columns: 1fr;
     gap: 40px;
+  }
+  .project-shots-nav {
+    width: 32px;
+    height: 32px;
+  }
+  .project-shots-nav.prev {
+    left: 8px;
+  }
+  .project-shots-nav.next {
+    right: 8px;
   }
 }
 

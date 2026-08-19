@@ -27,11 +27,10 @@ export default function About() {
       <hr className="rule" />
 
       <div className="container capabilities-full">
+        <span className="eyebrow capabilities-full-eyebrow">Capabilities</span>
         {capabilitiesFull.map((c) => (
-          <div className="capability" key={c.num}>
-            <p className="num">{c.num}</p>
+          <div className="capability-full" key={c.num}>
             <h3>{c.title}</h3>
-            <p>{c.copy}</p>
           </div>
         ))}
       </div>

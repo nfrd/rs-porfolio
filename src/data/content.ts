@@ -1,7 +1,13 @@
 import noctaManor from '../assets/works/nocta-manor.png'
+import noctaManor2 from '../assets/works/nocta-manor-2.avif'
+import noctaManor3 from '../assets/works/nocta-manor-3.avif'
+import noctaManor4 from '../assets/works/nocta-manor-4.avif'
 import cinelli from '../assets/works/cinelli.jpeg'
+import cinelli2 from '../assets/works/cinelli-2.webp'
 import pearledIvory from '../assets/works/pearled-ivory.png'
+import pearledIvory2 from '../assets/works/pearled-ivory-2.webp'
 import aritzia from '../assets/works/aritzia.jpeg'
+import aritzia2 from '../assets/works/aritzia-2.jpg'
 
 export interface Project {
   id: string
@@ -9,7 +15,7 @@ export interface Project {
   tags: string
   year: string
   blurb: string
-  photo: string
+  shots: string[]
 }
 
 export const projects: Project[] = [
@@ -20,7 +26,7 @@ export const projects: Project[] = [
     year: '2026',
     blurb:
       'A lifestyle capsule and pop-up concept built around a slower, after-hours read on performance wear.',
-    photo: noctaManor,
+    shots: [noctaManor, noctaManor2, noctaManor3, noctaManor4],
   },
   {
     id: 'cinelli',
@@ -29,7 +35,7 @@ export const projects: Project[] = [
     year: '2025',
     blurb:
       'A road-cycling apparel collection bridging track heritage with modern performance fabrics.',
-    photo: cinelli,
+    shots: [cinelli, cinelli2],
   },
   {
     id: 'pearledivory',
@@ -38,7 +44,7 @@ export const projects: Project[] = [
     year: '2025',
     blurb:
       'A limited colorway release exploring quiet luxury materials for everyday footwear.',
-    photo: pearledIvory,
+    shots: [pearledIvory, pearledIvory2],
   },
   {
     id: 'aritzia',
@@ -47,7 +53,7 @@ export const projects: Project[] = [
     year: '2024',
     blurb:
       "A capsule collaboration bringing performance-informed silhouettes to Aritzia's ready-to-wear line.",
-    photo: aritzia,
+    shots: [aritzia, aritzia2],
   },
 ]
 
@@ -56,24 +62,6 @@ export interface Capability {
   title: string
   copy: string
 }
-
-export const capabilities: Capability[] = [
-  {
-    num: '01',
-    title: 'Footwear & Apparel Design',
-    copy: 'Concept sketch to production-ready spec: uppers, trims, colorways, and the tech packs that keep a factory honest.',
-  },
-  {
-    num: '02',
-    title: 'Brand & Business Strategy',
-    copy: 'Positioning, go-to-market, and the pricing and retail calls that decide whether a good product finds its shelf.',
-  },
-  {
-    num: '03',
-    title: 'Athlete, Entertainment & Culture',
-    copy: 'The relationships that get a shoe onto the right feet, in the right room, at the right moment — not just paid placement.',
-  },
-]
 
 export const capabilitiesFull: Capability[] = [
   {

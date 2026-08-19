@@ -1,14 +1,22 @@
 import { Link } from 'react-router-dom'
-import { capabilities, projects } from '../data/content'
+import { projects } from '../data/content'
 import Footer from '../components/Footer'
+import WorksBelt from '../components/WorksBelt'
 
 export default function Home() {
-  const featured = projects.slice(0, 3)
+  const beltItems = projects.concat(projects)
 
   return (
     <div>
       <div className="container hero">
-        <h1>Design that earns attention before it asks</h1>
+        <h1>
+          A creative agency that specializes in brand partnerships, product development, and
+          footwear &amp; apparel design.
+        </h1>
+        <p>
+          Based in Los Angeles. Working with founders who need one partner across product,
+          positioning, and the people who make it land.
+        </p>
         <Link to="/works" className="btn">
           View the work
         </Link>
@@ -16,36 +24,31 @@ export default function Home() {
 
       <hr className="rule" />
 
-      <div className="container culture">
-        <p>Pushing the culture forward.</p>
-        <img src={projects[0].photo} alt={projects[0].name} />
-        <img src={projects[1].photo} alt={projects[1].name} />
+      <div className="works-belt-wrap">
+        <div className="container works-belt-head">
+          <span className="eyebrow">Works</span>
+          <div className="works-belt-head-right">
+            <Link to="/works">View all projects →</Link>
+            <span className="works-belt-hint">Drag to browse</span>
+          </div>
+        </div>
+        <WorksBelt projects={beltItems} />
+        <div className="container works-belt-link-mobile">
+          <Link to="/works">View all projects →</Link>
+        </div>
       </div>
 
       <hr className="rule" />
 
-      <div className="container works-list">
-        <div className="works-list-head">
-          <span className="eyebrow">Works</span>
-          <Link to="/works">View all projects →</Link>
+      <div className="container about-teaser">
+        <span className="eyebrow">About</span>
+        <div className="about-teaser-body">
+          <p>
+            Six years between the design room and the room where the right athlete decides
+            whether the product matters.
+          </p>
+          <Link to="/about">More about the studio →</Link>
         </div>
-        {featured.map((p) => (
-          <div className="works-row" key={p.id}>
-            <h3>{p.name}</h3>
-            <span>{p.tags}</span>
-          </div>
-        ))}
-      </div>
-
-      <div className="container capabilities">
-        <span className="eyebrow capabilities-eyebrow">Experience</span>
-        {capabilities.map((c) => (
-          <div className="capability" key={c.num}>
-            <p className="num">{c.num}</p>
-            <h3>{c.title}</h3>
-            <p>{c.copy}</p>
-          </div>
-        ))}
       </div>
 
       <Footer />
