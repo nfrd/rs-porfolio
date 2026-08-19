@@ -1,5 +1,6 @@
 import { projects } from '../data/content'
 import Footer from '../components/Footer'
+import ProjectShots from '../components/ProjectShots'
 
 export default function Works() {
   return (
@@ -13,7 +14,7 @@ export default function Works() {
         <div className="works-grid">
           {projects.map((p) => (
             <div className="work-card" key={p.id}>
-              <img src={p.photo} alt={p.name} />
+              <ProjectShots shots={p.shots} alt={p.name} />
               <h3>{p.name}</h3>
               <span>{p.tags}</span>
               <p>{p.blurb}</p>
