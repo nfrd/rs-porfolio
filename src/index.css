@@ -292,6 +292,14 @@ button {
 .works-belt-link-mobile {
   display: none;
 }
+.works-belt-frame {
+  position: relative;
+}
+/* The arrows are a touch affordance. A mouse has the drag and the wheel; a
+   phone has nothing else to move the belt with once its cruise has stopped. */
+.works-belt-nav {
+  display: none;
+}
 .works-belt {
   display: flex;
   gap: 24px;
@@ -364,6 +372,31 @@ button {
   .works-belt-item h3 {
     font-size: 18px;
     margin: 12px 0 4px;
+  }
+  .works-belt-nav {
+    position: absolute;
+    /* Half the image height — 250px wide at a 4/5 aspect — so the arrows sit
+       on the artwork instead of the caption underneath it. */
+    top: 156px;
+    transform: translateY(-50%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border: 0;
+    background: rgba(250, 249, 247, 0.55);
+    color: var(--text);
+    font-family: inherit;
+    font-size: 14px;
+    cursor: pointer;
+    opacity: 0.75;
+  }
+  .works-belt-nav.prev {
+    left: 8px;
+  }
+  .works-belt-nav.next {
+    right: 8px;
   }
 }
 

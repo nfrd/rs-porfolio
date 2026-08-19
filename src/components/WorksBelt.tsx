@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef } from 'react'
 import useDragScroll from '../hooks/useDragScroll'
 import type { Project } from '../data/content'
 
@@ -18,13 +18,15 @@ const BASE_COPY = 2
 
 /** Quiet time after the last scroll event before the belt is wrapped. */
 const SETTLE_MS = 160
-/** How long the belt stays put after the user lets go. */
-const HOLD_AFTER_DRAG = 1200
-/** Time constants for easing the belt back to its cruising speed. */
+/** Time constants for easing the belt up to speed and back down to a stop. */
 const TAU_CRUISE = 350
 const TAU_COAST = 700
 /** Ceiling on a flick, in px/ms, so a fast drag cannot fling the belt. */
 const MAX_FLICK = 3.5
+/** Below this, in px/ms, a coast is over and the frame loop shuts down. */
+const MIN_VEL = 0.0005
+/** scrollLeft moving further than this behind our back is the user, not us. */
+const USER_SCROLL = 4
 
 /**
  * Width of one copy of the list — the distance the belt can be shifted by
@@ -53,18 +55,31 @@ export default function WorksBelt({ projects, speed = 28 }: WorksBeltProps) {
   const loopRef = useRef(0)
   const draggingRef = useRef(false)
   const hoverRef = useRef(false)
-  const holdUntilRef = useRef(0)
-  const [fine, setFine] = useState(() => window.matchMedia('(pointer: fine)').matches)
+  /**
+   * The belt cruises on its own until the first deliberate move, then stays
+   * where it is left. Coming back on its own would take the belt out from under
+   * whoever just put it where they wanted it.
+   */
+  const autoRef = useRef(true)
+  const runningRef = useRef(false)
+  const rafRef = useRef(0)
+  const lastRef = useRef(0)
+  const cruiseRef = useRef(speed / 1000)
+  cruiseRef.current = speed / 1000
 
   const count = projects.length
 
-  // Single writer for scrollLeft, shared by the mouse drag, the drift loop and
+  // Single writer for scrollLeft, shared by the mouse drag, the frame loop and
   // the wrapping below.
   const applyScroll = useCallback((el: HTMLElement, left: number) => {
     const next = normalize(el, loopRef.current, left)
     el.scrollLeft = next
     posRef.current = next
     return next
+  }, [])
+
+  const stopAuto = useCallback(() => {
+    autoRef.current = false
   }, [])
 
   const trackRef = useDragScroll<HTMLDivElement>({
@@ -76,14 +91,57 @@ export default function WorksBelt({ projects, speed = 28 }: WorksBeltProps) {
     onStart: () => {
       draggingRef.current = true
       velRef.current = 0
+      stopAuto()
     },
     onEnd: (velocity) => {
       draggingRef.current = false
       // Pointer velocity is rightward-positive; scrollLeft runs the other way.
       velRef.current = Math.max(-MAX_FLICK, Math.min(MAX_FLICK, -velocity))
-      holdUntilRef.current = performance.now() + HOLD_AFTER_DRAG
+      // Nothing is cruising any more, so this run is purely the flick coasting
+      // to a stop.
+      ensureFrame()
     },
   })
+
+  /**
+   * One loop for both jobs: easing the belt up to its cruising speed, and
+   * letting a released drag coast down to nothing. It shuts itself off as soon
+   * as there is no motion left to render.
+   */
+  const frame: FrameRequestCallback = useCallback(
+    (t) => {
+      const el = trackRef.current
+      // The drag writes scrollLeft itself; there is nothing to animate until it
+      // lets go, and onEnd starts the loop again.
+      if (!el || draggingRef.current) {
+        runningRef.current = false
+        return
+      }
+      const dt = Math.min(64, t - lastRef.current)
+      lastRef.current = t
+
+      const target = autoRef.current && !hoverRef.current ? cruiseRef.current : 0
+      const tau = target === 0 ? TAU_COAST : TAU_CRUISE
+      velRef.current += (target - velRef.current) * (1 - Math.exp(-dt / tau))
+      if (target === 0 && Math.abs(velRef.current) < MIN_VEL) {
+        velRef.current = 0
+        runningRef.current = false
+        return
+      }
+      applyScroll(el, posRef.current + velRef.current * dt)
+      rafRef.current = requestAnimationFrame(frame)
+    },
+    [applyScroll, trackRef],
+  )
+
+  const ensureFrame = useCallback(() => {
+    if (runningRef.current) return
+    runningRef.current = true
+    lastRef.current = performance.now()
+    rafRef.current = requestAnimationFrame(frame)
+  }, [frame])
+
+  useEffect(() => () => cancelAnimationFrame(rafRef.current), [])
 
   useEffect(() => {
     const el = trackRef.current
@@ -97,9 +155,18 @@ export default function WorksBelt({ projects, speed = 28 }: WorksBeltProps) {
     // Start inside copy BASE_COPY so the first fling has runway either way.
     loopRef.current = measureLoop(el, count)
     applyScroll(el, loopRef.current * BASE_COPY)
+    ensureFrame()
 
     let settle: ReturnType<typeof setTimeout> | undefined
     const onScroll = () => {
+      // Anything that moved the belt further than our own frame did is the
+      // user — a swipe, the wheel, an arrow — so the cruise is over and the
+      // new position is now the truth.
+      if (!draggingRef.current && Math.abs(el.scrollLeft - posRef.current) > USER_SCROLL) {
+        stopAuto()
+        velRef.current = 0
+        posRef.current = el.scrollLeft
+      }
       clearTimeout(settle)
       // Shifting the belt mid-fling cuts iOS momentum short, so it waits for
       // the scrolling to go quiet. Both ends of the wrap show the same cards,
@@ -109,11 +176,15 @@ export default function WorksBelt({ projects, speed = 28 }: WorksBeltProps) {
         applyScroll(el, el.scrollLeft)
       }, SETTLE_MS)
     }
-    // A finger landing stops momentum dead, which makes it another free moment
-    // to wrap. The mouse is skipped: the drag records scrollLeft on pointerdown
-    // and would replay any shift made underneath it.
+    // A finger landing takes the belt over, and the momentum it kills makes
+    // this a free moment to wrap. The mouse is skipped on both counts: the drag
+    // records scrollLeft on pointerdown and would replay any shift made
+    // underneath it, and a plain click should not end the cruise.
     const onPointerDown = (e: PointerEvent) => {
-      if (e.pointerType !== 'mouse') applyScroll(el, el.scrollLeft)
+      if (e.pointerType === 'mouse') return
+      stopAuto()
+      velRef.current = 0
+      applyScroll(el, el.scrollLeft)
     }
 
     el.addEventListener('scroll', onScroll, { passive: true })
@@ -126,91 +197,68 @@ export default function WorksBelt({ projects, speed = 28 }: WorksBeltProps) {
       el.removeEventListener('pointerdown', onPointerDown)
       window.removeEventListener('resize', remeasure)
     }
-  }, [applyScroll, count, trackRef])
-
-  useEffect(() => {
-    const mq = window.matchMedia('(pointer: fine)')
-    const onChange = () => setFine(mq.matches)
-    mq.addEventListener('change', onChange)
-    return () => mq.removeEventListener('change', onChange)
-  }, [])
-
-  useEffect(() => {
-    const el = trackRef.current
-    // Only pointer-driven devices drift. On a phone the loop fights the
-    // momentum of a swipe, there is no cursor to park on to stop it, and it
-    // burns battery for an effect nobody asked to keep watching.
-    if (!el || !fine) return
-
-    const base = speed / 1000
-    let last = performance.now()
-    let raf = requestAnimationFrame(function frame(t) {
-      raf = requestAnimationFrame(frame)
-      const dt = Math.min(64, t - last)
-      last = t
-
-      // The drag owns scrollLeft while it is live.
-      if (draggingRef.current) {
-        posRef.current = el.scrollLeft
-        velRef.current = 0
-        return
-      }
-
-      const coasting = t < holdUntilRef.current
-      const target = coasting || hoverRef.current ? 0 : base
-      const tau = coasting ? TAU_COAST : TAU_CRUISE
-      velRef.current += (target - velRef.current) * (1 - Math.exp(-dt / tau))
-      if (target === 0 && Math.abs(velRef.current) < 0.0005) {
-        velRef.current = 0
-        return
-      }
-      applyScroll(el, posRef.current + velRef.current * dt)
-    })
-
-    // Trackpad / wheel scrolling moves the belt behind our back: adopt the new
-    // position instead of yanking it back on the next frame.
-    const onScroll = () => {
-      if (draggingRef.current) return
-      if (Math.abs(el.scrollLeft - posRef.current) <= 2) return
-      posRef.current = el.scrollLeft
-      velRef.current = 0
-      holdUntilRef.current = performance.now() + HOLD_AFTER_DRAG
-    }
-    el.addEventListener('scroll', onScroll, { passive: true })
-
-    return () => {
-      cancelAnimationFrame(raf)
-      el.removeEventListener('scroll', onScroll)
-    }
-  }, [applyScroll, fine, speed, trackRef])
+  }, [applyScroll, count, ensureFrame, stopAuto, trackRef])
 
   const setHover = (value: boolean) => (e: React.PointerEvent<HTMLDivElement>) => {
     if (e.pointerType !== 'mouse') return
     hoverRef.current = value
+    if (!value) ensureFrame()
+  }
+
+  /** Steps one card along. The scroll event that follows does the rest. */
+  const nudge = (dir: number) => () => {
+    const el = trackRef.current
+    if (!el) return
+    stopAuto()
+    velRef.current = 0
+    const kids = el.children
+    const card =
+      kids.length > 1
+        ? (kids[1] as HTMLElement).offsetLeft - (kids[0] as HTMLElement).offsetLeft
+        : el.clientWidth
+    el.scrollBy({ left: dir * card, behavior: 'smooth' })
   }
 
   return (
-    <div
-      className="works-belt"
-      ref={trackRef}
-      onPointerEnter={setHover(true)}
-      onPointerLeave={setHover(false)}
-    >
-      {Array.from({ length: COPIES }, (_, copy) =>
-        projects.map((p) => (
-          // Only the first copy is real as far as assistive tech is concerned;
-          // the rest exist to make the loop seamless.
-          <div
-            className="works-belt-item"
-            key={`${copy}-${p.id}`}
-            aria-hidden={copy > 0 || undefined}
-          >
-            <img src={p.shots[0]} alt={p.name} draggable={false} />
-            <h3>{p.name}</h3>
-            <span>{p.tags}</span>
-          </div>
-        )),
-      )}
+    <div className="works-belt-frame">
+      <div
+        className="works-belt"
+        ref={trackRef}
+        onPointerEnter={setHover(true)}
+        onPointerLeave={setHover(false)}
+      >
+        {Array.from({ length: COPIES }, (_, copy) =>
+          projects.map((p) => (
+            // Only the first copy is real as far as assistive tech is concerned;
+            // the rest exist to make the loop seamless.
+            <div
+              className="works-belt-item"
+              key={`${copy}-${p.id}`}
+              aria-hidden={copy > 0 || undefined}
+            >
+              <img src={p.shots[0]} alt={p.name} draggable={false} />
+              <h3>{p.name}</h3>
+              <span>{p.tags}</span>
+            </div>
+          )),
+        )}
+      </div>
+      <button
+        type="button"
+        aria-label="Previous project"
+        className="works-belt-nav prev"
+        onClick={nudge(-1)}
+      >
+        ←
+      </button>
+      <button
+        type="button"
+        aria-label="Next project"
+        className="works-belt-nav next"
+        onClick={nudge(1)}
+      >
+        →
+      </button>
     </div>
   )
 }
