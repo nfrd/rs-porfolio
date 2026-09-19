@@ -3,7 +3,6 @@ import { Link, useNavigate } from 'react-router-dom'
 
 const links = [
   { to: '/works', label: 'Works' },
-  { to: '/about', label: 'About' },
   { to: '/contact', label: 'Contact' },
 ]
 

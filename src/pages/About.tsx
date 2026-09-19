@@ -7,20 +7,14 @@ export default function About() {
     <div>
       <div className="container about-intro">
         <span className="eyebrow about-eyebrow">About</span>
-        <h1>
-          I've spent six years in the room where footwear design meets business strategy — and
-          the other room, where the right athlete or artist decides whether either one matters.
-        </h1>
+        <h1>Plural World makes things with form, feeling, and a reason to exist.</h1>
       </div>
 
       <div className="container about-body">
         <ImagePlaceholder label="portrait photograph" className="portrait-placeholder" />
         <p>
-          Plural World is a footwear and apparel designer turned brand strategist based in Los
-          Angeles. They've led product design for independent running and basketball brands,
-          built go-to-market plans that took two brands from zero to national retail, and
-          brokered the athlete and entertainment partnerships that got the product seen. They now
-          work with founders who need one person who can do all of it, in order.
+          Footwear, apparel, and the ideas around them. We work with people building from the
+          ground up, keeping the product clear and the point of view intact.
         </p>
       </div>
 

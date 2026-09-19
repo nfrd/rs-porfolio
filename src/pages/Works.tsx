@@ -16,8 +16,6 @@ export default function Works() {
             <div className="work-card" key={p.id}>
               <ProjectShots shots={p.shots} alt={p.name} />
               <h3>{p.name}</h3>
-              <span>{p.tags}</span>
-              <p>{p.blurb}</p>
             </div>
           ))}
         </div>

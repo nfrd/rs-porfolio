@@ -1,59 +1,55 @@
-import noctaManor from '../assets/works/nocta-manor.png'
-import noctaManor2 from '../assets/works/nocta-manor-2.avif'
-import noctaManor3 from '../assets/works/nocta-manor-3.avif'
-import noctaManor4 from '../assets/works/nocta-manor-4.avif'
-import cinelli from '../assets/works/cinelli.jpeg'
-import cinelli2 from '../assets/works/cinelli-2.webp'
-import pearledIvory from '../assets/works/pearled-ivory.png'
-import pearledIvory2 from '../assets/works/pearled-ivory-2.webp'
-import aritzia from '../assets/works/aritzia.jpeg'
-import aritzia2 from '../assets/works/aritzia-2.jpg'
+import kithBmw1 from '../assets/works/kith-bmw/IMG_3423.JPEG'
+import kithBmw2 from '../assets/works/kith-bmw/IMG_3425.JPEG'
+import kithBmw3 from '../assets/works/kith-bmw/IMG_3426.JPEG'
+import kithBmw4 from '../assets/works/kith-bmw/IMG_3427.JPEG'
+import kithCinelli1 from '../assets/works/kith-cinelli/IMG_3428.JPEG'
+import kithCinelli2 from '../assets/works/kith-cinelli/IMG_3429.JPEG'
+import kithCinelli3 from '../assets/works/kith-cinelli/IMG_3430.JPEG'
+import kithCinelli4 from '../assets/works/kith-cinelli/IMG_3432.JPEG'
+import kithOn1 from '../assets/works/kith-on/IMG_3436.JPEG'
+import kithOn2 from '../assets/works/kith-on/IMG_3437.JPEG'
+import kithOn3 from '../assets/works/kith-on/IMG_3438.JPEG'
+import kithOn4 from '../assets/works/kith-on/IMG_3440.JPEG'
+import noctaManor1 from '../assets/works/nocta-manor/IMG_3446.JPG'
+import noctaManor2 from '../assets/works/nocta-manor/IMG_3447.JPG'
+import noctaManor3 from '../assets/works/nocta-manor/IMG_3448.JPG'
+import noctaManor4 from '../assets/works/nocta-manor/IMG_3449.JPG'
+import kithMessiAdidas1 from '../assets/works/kith-messi-adidas/IMG_3455.JPG'
+import kithMessiAdidas2 from '../assets/works/kith-messi-adidas/IMG_3456.JPG'
+import kithMessiAdidas3 from '../assets/works/kith-messi-adidas/IMG_3457.JPG'
+import kithMessiAdidas4 from '../assets/works/kith-messi-adidas/IMG_3458.JPG'
 
 export interface Project {
   id: string
   name: string
-  tags: string
-  year: string
-  blurb: string
   shots: string[]
 }
 
 export const projects: Project[] = [
   {
-    id: 'noctamanor',
+    id: 'kith-bmw',
+    name: 'Kith x BMW',
+    shots: [kithBmw1, kithBmw2, kithBmw3, kithBmw4],
+  },
+  {
+    id: 'kith-cinelli',
+    name: 'Kith x Cinelli',
+    shots: [kithCinelli1, kithCinelli2, kithCinelli3, kithCinelli4],
+  },
+  {
+    id: 'kith-on-running',
+    name: 'Kith x On Running',
+    shots: [kithOn1, kithOn2, kithOn3, kithOn4],
+  },
+  {
+    id: 'nocta-manor',
     name: 'Nocta Manor',
-    tags: 'Apparel Design · Retail Concept',
-    year: '2026',
-    blurb:
-      'A lifestyle capsule and pop-up concept built around a slower, after-hours read on performance wear.',
-    shots: [noctaManor, noctaManor2, noctaManor3, noctaManor4],
+    shots: [noctaManor1, noctaManor2, noctaManor3, noctaManor4],
   },
   {
-    id: 'cinelli',
-    name: 'Cinelli',
-    tags: 'Apparel Design · Brand Partnership',
-    year: '2025',
-    blurb:
-      'A road-cycling apparel collection bridging track heritage with modern performance fabrics.',
-    shots: [cinelli, cinelli2],
-  },
-  {
-    id: 'pearledivory',
-    name: 'Pearled Ivory',
-    tags: 'Footwear Design · Colorway System',
-    year: '2025',
-    blurb:
-      'A limited colorway release exploring quiet luxury materials for everyday footwear.',
-    shots: [pearledIvory, pearledIvory2],
-  },
-  {
-    id: 'aritzia',
-    name: 'Aritzia',
-    tags: 'Brand Collaboration · Apparel Design',
-    year: '2024',
-    blurb:
-      "A capsule collaboration bringing performance-informed silhouettes to Aritzia's ready-to-wear line.",
-    shots: [aritzia, aritzia2],
+    id: 'kith-messi-adidas',
+    name: 'Kith x Messi x Adidas',
+    shots: [kithMessiAdidas1, kithMessiAdidas2, kithMessiAdidas3, kithMessiAdidas4],
   },
 ]
 

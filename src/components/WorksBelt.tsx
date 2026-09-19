@@ -238,7 +238,6 @@ export default function WorksBelt({ projects, speed = 28 }: WorksBeltProps) {
             >
               <img src={p.shots[0]} alt={p.name} draggable={false} />
               <h3>{p.name}</h3>
-              <span>{p.tags}</span>
             </div>
           )),
         )}

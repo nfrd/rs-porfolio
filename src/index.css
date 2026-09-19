@@ -330,19 +330,14 @@ button {
   height: auto;
   aspect-ratio: 4/5;
   object-fit: cover;
-  filter: grayscale(1);
   user-select: none;
   -webkit-user-drag: none;
 }
 .works-belt-item h3 {
   font-weight: 800;
   font-size: 22px;
-  margin: 14px 0 4px;
+  margin: 14px 0 0;
   letter-spacing: -0.01em;
-}
-.works-belt-item span {
-  font-size: 13px;
-  color: rgba(32, 30, 29, 0.6);
 }
 @media (max-width: 720px) {
   .works-belt-wrap {
@@ -371,7 +366,7 @@ button {
   }
   .works-belt-item h3 {
     font-size: 18px;
-    margin: 12px 0 4px;
+    margin: 12px 0 0;
   }
   .works-belt-nav {
     position: absolute;
@@ -420,6 +415,13 @@ button {
   letter-spacing: -0.01em;
   margin: 0;
 }
+.about-teaser-body p.about-teaser-copy {
+  font-size: 17px;
+  font-weight: 400;
+  line-height: 1.7;
+  letter-spacing: normal;
+  color: rgba(32, 30, 29, 0.82);
+}
 .about-teaser-body a {
   font-size: 14px;
   font-weight: 600;
@@ -436,6 +438,9 @@ button {
   }
   .about-teaser-body p {
     font-size: 21px;
+  }
+  .about-teaser-body p.about-teaser-copy {
+    font-size: 16px;
   }
 }
 
@@ -492,17 +497,7 @@ button {
 .work-card h3 {
   font-weight: 800;
   font-size: 18px;
-  margin: 0 0 6px;
-}
-.work-card span {
-  font-size: 13px;
-  color: rgba(32, 30, 29, 0.6);
-}
-.work-card p {
-  font-size: 14px;
-  line-height: 1.55;
-  color: rgba(32, 30, 29, 0.7);
-  margin: 10px 0 0;
+  margin: 0;
 }
 
 /* Project shot carousel (works page cards) */
@@ -543,7 +538,6 @@ button {
   height: auto;
   aspect-ratio: 4/3;
   object-fit: cover;
-  filter: grayscale(1);
   user-select: none;
   -webkit-user-drag: none;
   scroll-snap-align: start;
